@@ -1,13 +1,14 @@
 import unittest
-from functions import get_file_content, get_files_info
+from functions import get_file_content, get_files_info, write_file
 
 class TestGetFiles(unittest.TestCase):
     maxDiff = None
 
     def test_self(self):
         result = get_files_info.get_files_info("calculator", ".")
-        print(result)
+        #print(result)
         expected = """Result for current directory:
+  - lorem.txt: file_size=28 bytes, is_dir=False
   - tests.py: file_size=1342 bytes, is_dir=False
   - pkg: file_size=4096 bytes, is_dir=True
   - main.py: file_size=575 bytes, is_dir=False"""
@@ -15,30 +16,31 @@ class TestGetFiles(unittest.TestCase):
 
     def test_pkg(self):
         result = get_files_info.get_files_info("calculator", "pkg")
-        print(result)
+        #print(result)
         expected = """Result for 'pkg' directory:
   - render.py: file_size=766 bytes, is_dir=False
   - __pycache__: file_size=4096 bytes, is_dir=True
-  - calculator.py: file_size=1737 bytes, is_dir=False"""
+  - calculator.py: file_size=1737 bytes, is_dir=False
+  - morelorem.txt: file_size=26 bytes, is_dir=False"""
         self.assertEqual(result, expected)
 
     def test_bin(self):
         result = get_files_info.get_files_info("calculator", "/bin")
-        print(result)
+        #print(result)
         expected = """Result for '/bin' directory:
     Error: Cannot list "/bin" as it is outside the permitted working directory"""
         self.assertEqual(result, expected)
 
     def test_parent(self):
         result = get_files_info.get_files_info("calculator", "../")
-        print(result)
+        #print(result)
         expected = """Result for '../' directory:
     Error: Cannot list "../" as it is outside the permitted working directory"""
         self.assertEqual(result, expected)
     
     def test_read_main(self):
         result = get_file_content.get_file_content("calculator", "main.py")
-        print(result)
+        #print(result)
         expected = """# main.py
 
 import sys
@@ -69,7 +71,7 @@ if __name__ == "__main__":
 
     def test_read_calc(self):
         result = get_file_content.get_file_content("calculator", "pkg/calculator.py")
-        print(result)
+        #print(result)
         expected = """# calculator.py
 
 class Calculator:
@@ -134,13 +136,28 @@ class Calculator:
         self.assertEqual(result, expected)
     def test_read_outside(self):
         result = get_file_content.get_file_content("calculator", "/bin/cat")
-        print(result)
+        #print(result)
         expected = """Error: Cannot read "/bin/cat" as it is outside the permitted working directory"""
         self.assertEqual(result, expected)
     def test_read_dne(self):
         result = get_file_content.get_file_content("calculator", "pkg/does_not_exist.py")
-        print(result)
+        #print(result)
         expected = """Error: File not found or is not a regular file: "pkg/does_not_exist.py\""""
+        self.assertEqual(result, expected)
+    def test_write_lorem(self):
+        result = write_file.write_file("calculator", "lorem.txt", "wait, this isn't lorem ipsum")
+        print(result)
+        expected = """Successfully wrote to "lorem.txt" (28 characters written)"""
+        self.assertEqual(result, expected)
+    def test_write_more_lorem(self):
+        result = write_file.write_file("calculator", "pkg/morelorem.txt", "lorem ipsum dolor sit amet")
+        print(result)
+        expected = """Successfully wrote to "pkg/morelorem.txt" (26 characters written)"""
+        self.assertEqual(result, expected)
+    def test_write_temp(self):
+        result = write_file.write_file("calculator", "/tmp/temp.txt", "this should not be allowed")
+        print(result)
+        expected = """Error: Cannot write to "/tmp/temp.txt" as it is outside the permitted working directory"""
         self.assertEqual(result, expected)
 
 if __name__ == "__main__":
