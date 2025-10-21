@@ -1,5 +1,5 @@
 import unittest
-from functions import get_file_content, get_files_info, write_file
+from functions import get_file_content, get_files_info, write_file, run_python_file
 
 class TestGetFiles(unittest.TestCase):
     maxDiff = None
@@ -146,19 +146,36 @@ class Calculator:
         self.assertEqual(result, expected)
     def test_write_lorem(self):
         result = write_file.write_file("calculator", "lorem.txt", "wait, this isn't lorem ipsum")
-        print(result)
+        #print(result)
         expected = """Successfully wrote to "lorem.txt" (28 characters written)"""
         self.assertEqual(result, expected)
     def test_write_more_lorem(self):
         result = write_file.write_file("calculator", "pkg/morelorem.txt", "lorem ipsum dolor sit amet")
-        print(result)
+        #print(result)
         expected = """Successfully wrote to "pkg/morelorem.txt" (26 characters written)"""
         self.assertEqual(result, expected)
     def test_write_temp(self):
         result = write_file.write_file("calculator", "/tmp/temp.txt", "this should not be allowed")
-        print(result)
+        #print(result)
         expected = """Error: Cannot write to "/tmp/temp.txt" as it is outside the permitted working directory"""
         self.assertEqual(result, expected)
-
+    def test_run_calc_instructions(self):
+        result = run_python_file.run_python_file("calculator", "main.py")
+        print(result)
+    def test_run_calc(self):
+        result = run_python_file.run_python_file("calculator", "main.py", ["3 + 5"])
+        print(result)
+    def test_run_tests(self):
+        result = run_python_file.run_python_file("calculator", "tests.py")
+        print(result)
+    def test_run_out_of_scope(self):
+        result = run_python_file.run_python_file("calculator", "../main.py")
+        print(result)
+    def test_run_dne(self):
+        result = run_python_file.run_python_file("calculator", "nonexistent.py")
+        print(result)
+    def test_run_not_code(self):
+        result = run_python_file.run_python_file("calculator", "lorem.txt")
+        print(result)
 if __name__ == "__main__":
     unittest.main()
