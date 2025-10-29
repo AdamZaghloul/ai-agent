@@ -18,7 +18,7 @@ def run_python_file(working_directory, file_path, args=[]):
             contents += f'Error: "{file_path}" is not a Python file.'
             return contents
         
-        cmd = ["python", file_path] + args
+        cmd = ["python3", file_path] + args
 
         process = subprocess.run(cmd, timeout=30, capture_output=True, text=True, cwd=working_directory)
 

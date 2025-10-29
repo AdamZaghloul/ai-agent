@@ -1,5 +1,6 @@
 import os
 import sys
+import functions.call_function
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
@@ -57,9 +58,12 @@ def main():
 
     if response.function_calls is not None:
         for call in response.function_calls:
-            print(f"Calling function: {call.name}({call.args})")
-
-    print(response.text)
+            result = functions.call_function.call_function(call, verbose)
+            if result.parts[0].function_response.response is None:
+                raise Exception("Error: Function call had no response.")
+            
+            if verbose:
+                print(f"-> {result.parts[0].function_response.response}")
 
     if verbose:
         print(f"User prompt: {prompt}")
